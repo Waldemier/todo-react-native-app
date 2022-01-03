@@ -1,18 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Header} from './app/components/Header';
+import {useState} from "react";
+import {Todo} from "./app/models/Todo";
+import {Interact} from "./app/components/Interact";
+import {List} from "./app/components/List";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    const [todos, setTodo] = useState([] as Todo[]);
+
+    const onSetHandler = (task: Todo) => {
+        if (task.task?.trim()) {
+            setTodo(prev => [...prev, task]);
+        }
+    }
+
+    const onRemove = (task: Todo) => {
+        setTodo(prevState => prevState.filter((x: Todo) => {
+            return x.id !== task.id
+        }));
+    }
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <Header />
+            <Interact onSubmit={onSetHandler} />
+            <List todos={todos.reverse()} onRemove={onRemove} />
+            <StatusBar style="dark" />
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
